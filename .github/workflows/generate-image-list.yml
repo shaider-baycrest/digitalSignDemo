@@ -1,0 +1,30 @@
+name: Generate Image List
+
+on:
+  push:
+    paths:
+      - 'images/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Generate images.json
+        run: |
+          echo "[" > images.json
+          find images -type f \( -iname '*.jpg' -o -iname '*.png' -o -iname '*.jpeg' -o -iname '*.gif' \) | \
+            sed 's/^/  "/; s/$/",/' >> images.json
+          sed -i '$ s/,$//' images.json
+          echo "]" >> images.json
+
+      - name: Commit and push
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add images.json
+          git commit -m "Update images.json" || echo "No changes to commit"
+          git push
