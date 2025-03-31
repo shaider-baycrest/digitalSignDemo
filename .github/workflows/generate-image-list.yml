@@ -5,6 +5,9 @@ on:
     paths:
       - 'images/**'
 
+permissions:
+  contents: write  # ✅ This is what gives push access!
+
 jobs:
   build:
     runs-on: ubuntu-latest
