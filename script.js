@@ -13,10 +13,13 @@ function showNextImage() {
 }
 
 function startSlideshow() {
-  document.body.requestFullscreen().catch(console.error);
-  startBtn.style.display = "none";
-  showNextImage();
-  interval = setInterval(showNextImage, delay);
+  document.body.requestFullscreen()
+    .then(() => {
+      startBtn.style.display = "none";
+      showNextImage();
+      interval = setInterval(showNextImage, delay);
+    })
+    .catch(console.error);
 }
 
 document.addEventListener("fullscreenchange", () => {
@@ -31,6 +34,7 @@ startBtn.addEventListener("click", startSlideshow);
 fetch("images.json", { cache: "no-store" })
   .then(res => res.json())
   .then(data => {
+    console.log("Loaded image list:", data);
     imageList = data;
   })
   .catch(err => {
