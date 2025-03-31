@@ -28,7 +28,10 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git fetch origin
+          git rebase origin/main || git pull --rebase
           git add images.json
           git commit -m "Auto-update images.json" || echo "No changes to commit"
-          git push
+          git push origin HEAD:main
+
 
