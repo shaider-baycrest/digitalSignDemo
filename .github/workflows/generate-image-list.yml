@@ -6,7 +6,7 @@ on:
       - 'images/**'
 
 permissions:
-  contents: write  # ✅ This is what gives push access!
+  contents: write  # 🟢 Required to allow push
 
 jobs:
   build:
@@ -21,13 +21,18 @@ jobs:
           echo "[" > images.json
           find images -type f \( -iname '*.jpg' -o -iname '*.png' -o -iname '*.jpeg' -o -iname '*.gif' \) | \
             sed 's/^/  "/; s/$/",/' >> images.json
-          sed -i '$ s/,$//' images.json
+          sed -i '$ s/,$//' images.json || true
           echo "]" >> images.json
 
       - name: Commit and push
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          git fetch origin
+          git checkout main
+          git pull origin main --rebase
+      
           git add images.json
-          git commit -m "Update images.json" || echo "No changes to commit"
-          git push
+          git commit -m "Auto-update images.json" || echo "No changes to commit"
+          git push origin main
